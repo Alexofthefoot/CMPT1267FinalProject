@@ -8,8 +8,8 @@ const int playerHeight = 128;
 enum PlayerFacing
 {
 	Player_Facing_Up = 0,		//0
-	Player_Facing_Down = 1,		//1
-	Player_Facing_Left = 2,		//2
+	Player_Facing_Left = 1,		//1
+	Player_Facing_Down = 2,		//2
 	Player_Facing_Right = 3,	//3
 };
 
