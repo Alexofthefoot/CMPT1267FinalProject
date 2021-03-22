@@ -24,6 +24,7 @@ private:
 	void GenerateOutput();
 	void DrawPlayer();
 	void UnloadData();
+	bool OffScreen();
 
 	//SDL_Surface* mSurface;
 	SDL_Window* mWindow;

@@ -197,13 +197,24 @@ void Game::UpdateGame()
 	mPlayerPos.y += mPlayerDir.y;
 
 	
-
 	// Did the player go off the screen?
+	if (OffScreen())
+	{
+		mIsRunning = false;
+	}
 
-	// Did the player collide with the top wall?
+}
 
-	// Did the player collide with the bottom wall?
-
+bool Game::OffScreen()
+{
+	// offset calculated based on window offset along with centre point of image = 100 + 64
+	int offset = -164;
+	if (mPlayerPos.x <= offset || mPlayerPos.x >= 1024 + offset ||
+		mPlayerPos.y <= offset || mPlayerPos.y >= 768 + offset)
+	{
+		return true;
+	}
+	return false;
 }
 
 void Game::GenerateOutput()
