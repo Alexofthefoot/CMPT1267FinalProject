@@ -2,6 +2,8 @@
 #include "Game.h"
 #include "SDL/SDL_image.h"
 
+
+
 const int playerWidth = 128;
 const int playerHeight = 128;
 
@@ -29,7 +31,8 @@ Game::Game()
 	mPlayerFacing = 3; // start game facing right
 	mPlayerLives = 3;
 	mCycle = 0;
-
+	mHayBales = 0;
+	mMaxHayBales = 3;
 }
 
 bool Game::Initialize()
@@ -95,6 +98,7 @@ bool Game::Initialize()
 
 void Game::Welcome()
 {
+	srand(time(0));
 	//Display welcome screen
 	mTexture = IMG_LoadTexture(mRenderer, "Assets/WelcomeScreen.png");
 	SDL_RenderCopy(mRenderer, mTexture, NULL, NULL);
@@ -205,6 +209,27 @@ void Game::UpdateGame()
 
 }
 
+void Game::UpdateEnvironment()
+{
+	SpawnHayBales();
+}
+
+void Game::SpawnHayBales()
+{
+	if (myHaybales.size() < mMaxHayBales)
+	{
+		Haybale haybale;
+		haybale.Initialize();
+		myHaybales.push_back(haybale);
+		
+	}
+	printf("Number of bales: %d", myHaybales.size());
+	for (Haybale h : myHaybales)
+	{
+		printf("\n%d\n     %d\n", h.GetXPosition(), h.GetYPosition());
+	}
+}
+
 bool Game::OffScreen()
 {
 	// offset calculated based on window offset along with centre point of image = 100 + 64
@@ -237,24 +262,30 @@ void Game::GenerateOutput()
 
 	SDL_RenderCopy(mRenderer, mTexture, &srcR, &Player_Rect);
 
+
+
+	if (!LoadFromFile("haybale.png"))
+	{
+
+	}
+
+	UpdateEnvironment();
+
 	// Display remaining lives in top corner
 	SDL_Rect Haybale{ 10,10,100,100 };
-	/*
+	
 	for (int i = 0; i < mPlayerLives; i++)
 	{
 		SDL_RenderFillRect(mRenderer, &Haybale);
 		SDL_RenderCopy(mRenderer, mTexture, NULL, &Haybale);
 		Haybale.x += 120;
 	}
-	*/
+
 	// Swap front buffer and back buffer (making it all visible)
 	SDL_RenderPresent(mRenderer);
 }
 
-void Game::DrawPlayer()
-{
 
-}
 
 bool Game::LoadFromFile(std::string filename)
 {

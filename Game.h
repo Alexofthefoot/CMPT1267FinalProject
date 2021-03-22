@@ -1,7 +1,11 @@
 
 #pragma once
 #include "SDL/SDL.h"
+#include "Haybale.h"
 #include <string>
+#include <vector>
+#include <time.h>
+
 struct Vector2
 {
 	float x;
@@ -22,7 +26,8 @@ private:
 	void UpdateGame();
 	void IncrementRunCycle();
 	void GenerateOutput();
-	void DrawPlayer();
+	void UpdateEnvironment();
+	void SpawnHayBales();
 	void UnloadData();
 	bool OffScreen();
 
@@ -44,4 +49,7 @@ private:
 	int mPlayerLives;
 	int mCycle;
 	int mCycleCount;
+	int mHayBales;
+	int mMaxHayBales;
+	std::vector<Haybale> myHaybales;
 };
