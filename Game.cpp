@@ -1,4 +1,4 @@
-
+#include <stdio.h>
 #include "Game.h"
 #include "SDL/SDL_image.h"
 
@@ -7,10 +7,15 @@ const int playerHeight = 128;
 
 enum PlayerFacing
 {
-	Player_Facing_Up,		//0
-	Player_Facing_Down,		//1
-	Player_Facing_Left,		//2
-	Player_Facing_Right,	//3
+	Player_Facing_Up = 0,		//0
+	Player_Facing_Down = 1,		//1
+	Player_Facing_Left = 2,		//2
+	Player_Facing_Right = 3,	//3
+};
+
+enum PlayerRunCycle
+{
+	cycle = 0
 };
 
 Game::Game()
@@ -74,7 +79,7 @@ bool Game::Initialize()
 	Welcome();
 
 	
-	if (!LoadFromFile("Assets/haybale.png"))
+	if (!LoadFromFile("Assets/cow_walk.png"))
 	{
 		SDL_Log("Unable to load png file: %s", SDL_GetError());
 		return false;
@@ -119,6 +124,28 @@ void Game::RunLoop()
 		UpdateGame();
 		GenerateOutput();
 	}
+}
+
+void Game::UpdateSprite(std::string filename)
+{
+	if (mTexture != NULL) // if there is any texture loaded, destroy it
+	{
+		SDL_DestroyTexture(mTexture);
+		mTexture = NULL;
+	}
+
+	SDL_Surface* loadedSurface = IMG_Load(filename.c_str());
+	mTexture = SDL_CreateTextureFromSurface(mRenderer, loadedSurface);
+
+	if (loadedSurface == nullptr)
+	{
+		printf("Error! Cannot Load the Image!!");
+		SDL_FreeSurface(loadedSurface);
+	
+	}
+
+	SDL_FreeSurface(loadedSurface);
+
 }
 
 void Game::ProcessInput()
@@ -172,7 +199,6 @@ void Game::ProcessInput()
 
 void Game::UpdateGame()
 {
-	
 	// Update tick counts (for next frame)
 	mTicksCount = SDL_GetTicks();
 
@@ -183,7 +209,7 @@ void Game::UpdateGame()
 
 	
 
-	// Did the player go off the screen? (if so, end game)
+	// Did the player go off the screen?
 
 	// Did the player collide with the top wall?
 
@@ -198,19 +224,20 @@ void Game::GenerateOutput()
 
 	// Clear back buffer
 	SDL_RenderClear(mRenderer);
+	SDL_Rect Rect2{ 0, 0, 128, 128 };
 
 	SDL_Rect Player_Rect{
 		mPlayerPos.x,			// Top left x
 		mPlayerPos.y,			// Top left y
-		playerWidth*2,					// Width
+		playerWidth*2,			// Width
 		playerHeight*2			// Height
 	};
 	SDL_RenderFillRect(mRenderer, &Player_Rect);
-	SDL_RenderCopy(mRenderer, mTexture, NULL, &Player_Rect);
 
-	// Display remaining lives
+	SDL_RenderCopy(mRenderer, mTexture, &Rect2, &Player_Rect);
+
+	// Display remaining lives in top corner
 	SDL_Rect Haybale{ 10,10,100,100 };
-	//mTexture = ;
 	for (int i = 0; i < mPlayerLives; i++)
 	{
 		SDL_RenderFillRect(mRenderer, &Haybale);
@@ -220,6 +247,11 @@ void Game::GenerateOutput()
 
 	// Swap front buffer and back buffer (making it all visible)
 	SDL_RenderPresent(mRenderer);
+}
+
+void Game::DrawPlayer()
+{
+
 }
 
 bool Game::LoadFromFile(std::string filename)

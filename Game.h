@@ -20,7 +20,9 @@ private:
 	void Welcome();
 	void ProcessInput();
 	void UpdateGame();
+	void UpdateSprite(std::string filename);
 	void GenerateOutput();
+	void DrawPlayer();
 	void UnloadData();
 
 	//SDL_Surface* mSurface;
