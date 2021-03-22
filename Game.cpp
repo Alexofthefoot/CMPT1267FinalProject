@@ -28,6 +28,7 @@ Game::Game()
 	mIsRunning = true;
 	mPlayerFacing = 3; // start game facing right
 	mPlayerLives = 3;
+	mCycle = 0;
 
 }
 
@@ -126,26 +127,14 @@ void Game::RunLoop()
 	}
 }
 
-void Game::UpdateSprite(std::string filename)
+void Game::IncrementRunCycle()
 {
-	if (mTexture != NULL) // if there is any texture loaded, destroy it
+	mCycleCount++;
+	if (mCycleCount > 6)
 	{
-		SDL_DestroyTexture(mTexture);
-		mTexture = NULL;
+		mCycleCount = mCycleCount % 6;
 	}
-
-	SDL_Surface* loadedSurface = IMG_Load(filename.c_str());
-	mTexture = SDL_CreateTextureFromSurface(mRenderer, loadedSurface);
-
-	if (loadedSurface == nullptr)
-	{
-		printf("Error! Cannot Load the Image!!");
-		SDL_FreeSurface(loadedSurface);
-	
-	}
-
-	SDL_FreeSurface(loadedSurface);
-
+	mCycle = mCycleCount / 3;
 }
 
 void Game::ProcessInput()
@@ -194,7 +183,7 @@ void Game::ProcessInput()
 		mPlayerDir.x += 4.0f;
 		mPlayerFacing = Player_Facing_Right;
 	}
-
+	IncrementRunCycle();
 }
 
 void Game::UpdateGame()
@@ -224,7 +213,8 @@ void Game::GenerateOutput()
 
 	// Clear back buffer
 	SDL_RenderClear(mRenderer);
-	SDL_Rect Rect2{ 0, 0, 128, 128 };
+	
+	SDL_Rect srcR{ 128 * mCycle , 128 * mPlayerFacing, 128, 128};
 
 	SDL_Rect Player_Rect{
 		mPlayerPos.x,			// Top left x
@@ -234,17 +224,18 @@ void Game::GenerateOutput()
 	};
 	SDL_RenderFillRect(mRenderer, &Player_Rect);
 
-	SDL_RenderCopy(mRenderer, mTexture, &Rect2, &Player_Rect);
+	SDL_RenderCopy(mRenderer, mTexture, &srcR, &Player_Rect);
 
 	// Display remaining lives in top corner
 	SDL_Rect Haybale{ 10,10,100,100 };
+	/*
 	for (int i = 0; i < mPlayerLives; i++)
 	{
 		SDL_RenderFillRect(mRenderer, &Haybale);
 		SDL_RenderCopy(mRenderer, mTexture, NULL, &Haybale);
 		Haybale.x += 120;
 	}
-
+	*/
 	// Swap front buffer and back buffer (making it all visible)
 	SDL_RenderPresent(mRenderer);
 }

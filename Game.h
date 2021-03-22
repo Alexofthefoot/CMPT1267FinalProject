@@ -20,7 +20,7 @@ private:
 	void Welcome();
 	void ProcessInput();
 	void UpdateGame();
-	void UpdateSprite(std::string filename);
+	void IncrementRunCycle();
 	void GenerateOutput();
 	void DrawPlayer();
 	void UnloadData();
@@ -41,4 +41,6 @@ private:
 	Vector2 mPlayerDir;
 	int mPlayerFacing;
 	int mPlayerLives;
+	int mCycle;
+	int mCycleCount;
 };
