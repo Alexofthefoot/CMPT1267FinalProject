@@ -19,7 +19,7 @@ public:
 	bool Initialize();
 	void RunLoop();
 	void Shutdown();
-	bool LoadFromFile(std::string);
+	SDL_Texture* LoadFromFile(std::string);
 private:
 	void Welcome();
 	void ProcessInput();

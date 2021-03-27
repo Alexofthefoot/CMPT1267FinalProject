@@ -82,13 +82,20 @@ bool Game::Initialize()
 	// Display the welcome screen
 	Welcome();
 
-	
-	if (!LoadFromFile("Assets/cow_walk.png"))
+	// if there is any texture loaded, destroy it. Otherwise set it to the sprite sheet
+	if (mTexture != NULL)
+	{
+		SDL_DestroyTexture(mTexture);
+		mTexture = NULL;
+	}
+	mTexture = LoadFromFile("Assets/cow_walk.png");
+	if (mTexture == NULL)
 	{
 		SDL_Log("Unable to load png file: %s", SDL_GetError());
 		return false;
 	}
-	
+
+	//Set players info
 	mPlayerPos.x = 1024.0f / 2.0f; 
 	mPlayerPos.y = 768.0f / 2.0f;
 	mPlayerDir.x = 0.0f;
@@ -207,6 +214,7 @@ void Game::UpdateGame()
 		mIsRunning = false;
 	}
 
+	UpdateEnvironment();
 }
 
 void Game::UpdateEnvironment()
@@ -263,14 +271,6 @@ void Game::GenerateOutput()
 	SDL_RenderCopy(mRenderer, mTexture, &srcR, &Player_Rect);
 
 
-
-	if (!LoadFromFile("haybale.png"))
-	{
-
-	}
-
-	UpdateEnvironment();
-
 	// Display remaining lives in top corner
 	SDL_Rect Haybale{ 10,10,100,100 };
 	
@@ -287,16 +287,10 @@ void Game::GenerateOutput()
 
 
 
-bool Game::LoadFromFile(std::string filename)
+SDL_Texture* Game::LoadFromFile(std::string filename)
 {
-	if (mTexture != NULL) // if there is any texture loaded, destroy it
-	{
-		SDL_DestroyTexture(mTexture);
-		mTexture = NULL;
-	}
-
 	SDL_Surface* loadedSurface = IMG_Load(filename.c_str());
-	mTexture = SDL_CreateTextureFromSurface(mRenderer, loadedSurface);
+	SDL_Texture* mTexture = SDL_CreateTextureFromSurface(mRenderer, loadedSurface);
 
 	if (loadedSurface == nullptr)
 	{
@@ -306,7 +300,7 @@ bool Game::LoadFromFile(std::string filename)
 	}
 	
 	SDL_FreeSurface(loadedSurface);
-	return true;
+	return mTexture;
 	
 }
 
