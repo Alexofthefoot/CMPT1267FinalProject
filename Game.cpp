@@ -88,7 +88,7 @@ bool Game::Initialize()
 		SDL_DestroyTexture(mTexture);
 		mTexture = NULL;
 	}
-	mTexture = LoadFromFile("Assets/cow_walk.png");
+	mTexture = LoadFromFile("Assets/spritesheet.png");
 	if (mTexture == NULL)
 	{
 		SDL_Log("Unable to load png file: %s", SDL_GetError());
@@ -258,7 +258,7 @@ void Game::GenerateOutput()
 	// Clear back buffer
 	SDL_RenderClear(mRenderer);
 	
-	SDL_Rect srcR{ 128 * mCycle , 128 * mPlayerFacing, 128, 128};
+	SDL_Rect srcRect{ 128 * mCycle , 128 * mPlayerFacing, 128, 128};
 
 	SDL_Rect Player_Rect{
 		mPlayerPos.x,			// Top left x
@@ -268,17 +268,36 @@ void Game::GenerateOutput()
 	};
 	SDL_RenderFillRect(mRenderer, &Player_Rect);
 
-	SDL_RenderCopy(mRenderer, mTexture, &srcR, &Player_Rect);
+	SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Player_Rect);
 
 
-	// Display remaining lives in top corner
-	SDL_Rect Haybale{ 10,10,100,100 };
+	// change which part of sprite sheet 
+	srcRect.x = 500;
+	srcRect.y = 0;
+	srcRect.w = 500;
+	srcRect.h = 450;
+
+	SDL_Rect Hay_Rect{0,0,playerWidth, playerHeight};
+
+	// Draw the (randomized location) haybales
+	for (Haybale h : myHaybales)
+	{
+		Hay_Rect.x = h.GetXPosition();
+		Hay_Rect.y = h.GetYPosition();
+		SDL_RenderFillRect(mRenderer, &Hay_Rect);
+		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Hay_Rect);
+	}
+
+
+
+	// Display remaining lives/health in top corner (for now using the same haybale image)
+	SDL_Rect Healthbar_Rect{ 5,5,50,50 };
 	
 	for (int i = 0; i < mPlayerLives; i++)
 	{
-		SDL_RenderFillRect(mRenderer, &Haybale);
-		SDL_RenderCopy(mRenderer, mTexture, NULL, &Haybale);
-		Haybale.x += 120;
+		SDL_RenderFillRect(mRenderer, &Healthbar_Rect);
+		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Healthbar_Rect);
+		Healthbar_Rect.x += 60;
 	}
 
 	// Swap front buffer and back buffer (making it all visible)
