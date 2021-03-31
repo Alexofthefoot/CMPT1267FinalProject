@@ -17,9 +17,7 @@ public:
 	//bool CanCowEat();
 
 	Vector2 mHayBalePos;
-	SDL_Texture* mTexture;
-	SDL_Renderer* mRenderer;
-	int size = 32;
+	int size;
 
 };
 

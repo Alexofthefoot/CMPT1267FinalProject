@@ -12,6 +12,7 @@ void Haybale::Initialize()
 	int minY = 0;
 	int maxX = 600;
 	int maxY = 600;
+	int size = 1;
 	mHayBalePos.x = randomize(minX, maxX);
 	mHayBalePos.y = randomize(minY, maxY);
 }

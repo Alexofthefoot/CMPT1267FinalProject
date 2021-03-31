@@ -33,12 +33,15 @@ Game::Game()
 	mCycle = 0;
 	mHayBales = 0;
 	mMaxHayBales = 3;
+	mMusicplaying = 1;
+	mChomp = nullptr;
+	mBackground = nullptr;
 }
 
 bool Game::Initialize()
 {
 	// Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) != 0)
 	{
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
 		return false;
@@ -78,6 +81,13 @@ bool Game::Initialize()
 		SDL_Log("Failed to create renderer: %s", SDL_GetError());
 		return false;
 	}
+
+	// Set up the music and sound effects
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+	mBackground = Mix_LoadMUS("Assets/jauntytune.wav");
+	mChomp = Mix_LoadWAV("assets/chewing.wav");
+	Mix_PlayMusic(mBackground, -1);
+
 
 	// Display the welcome screen
 	Welcome();
@@ -195,9 +205,23 @@ void Game::ProcessInput()
 		mPlayerFacing = Player_Facing_Right;
 	}
 	// Pause/play music
-	if (state[SDL_SCANCODE_S])
+	if (state[SDL_SCANCODE_P])
 	{
-		// do things
+		if (Mix_PlayingMusic() == 0)
+		{
+			Mix_PlayMusic(mBackground, -1);
+		}
+		else
+		{
+			if (Mix_PausedMusic() == 1)
+			{
+				Mix_ResumeMusic();
+			}
+			else
+			{
+				Mix_PauseMusic();
+			}
+		}
 	}
 	IncrementRunCycle();
 }
@@ -295,17 +319,17 @@ void Game::GenerateOutput()
 		playerWidth*2,			// Width
 		playerHeight*2			// Height
 	};
-	//SDL_RenderFillRect(mRenderer, &Player_Rect);       THIS GIVES THE SQUARE AROUND TEH IMAGE, NOT NEEDED!
+	//SDL_RenderFillRect(mRenderer, &Player_Rect);       THIS GIVES THE SQUARE AROUND THE IMAGE, NOT NEEDED!
 
 	SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Player_Rect);
 
 
 	// Display remaining lives/health in top corner (for now using the same haybale image)
 	SDL_Rect Healthbar_Rect{ 5,5,50,50 };
-	
+	srcRect.y = 128 * 3; //have it always facing right
 	for (int i = 0; i < mPlayerLives; i++)
 	{
-		//SDL_RenderFillRect(mRenderer, &Healthbar_Rect);        THIS GIVES THE SQUARE AROUND TEH IMAGE, NOT NEEDED!
+		//SDL_RenderFillRect(mRenderer, &Healthbar_Rect);        THIS GIVES THE SQUARE AROUND THE IMAGE, NOT NEEDED in final copy!
 		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Healthbar_Rect);
 		Healthbar_Rect.x += 60;
 	}

@@ -1,6 +1,7 @@
 
 #pragma once
 #include "SDL/SDL.h"
+#include "SDL/SDL_mixer.h"
 #include "Haybale.h"
 #include <string>
 #include <vector>
@@ -26,18 +27,12 @@ private:
 	void UnloadData();
 	bool OffScreen();
 
-	//SDL_Surface* mSurface;
 	SDL_Window* mWindow;
 	SDL_Renderer* mRenderer;
 	SDL_Texture* mTexture;
 	Uint32 mTicksCount;
-
 	bool mIsRunning;
-	int mPaddleDir;
-	int mPaddleDir2;
-
-	Vector2 mPaddlePos;
-	Vector2 mPaddlePos2;
+	
 	Vector2 mPlayerPos;
 	Vector2 mPlayerDir;
 	int mPlayerFacing;
@@ -47,4 +42,7 @@ private:
 	int mHayBales;
 	int mMaxHayBales;
 	std::vector<Haybale> myHaybales;
+	Mix_Chunk* mChomp;
+	Mix_Music* mBackground;
+	int mMusicplaying;
 };
