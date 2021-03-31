@@ -28,7 +28,7 @@ Game::Game()
 	mTexture = nullptr;
 	mTicksCount = 0;
 	mIsRunning = true;
-	mPlayerFacing = 3; // start game facing right
+	mPlayerFacing = Player_Facing_Right; 
 	mPlayerLives = 3;
 	mCycle = 0;
 	mHayBales = 0;
@@ -89,7 +89,7 @@ bool Game::Initialize()
 	Mix_PlayMusic(mBackground, -1);
 
 
-	// Display the welcome screen
+	// Display the welcome screen & wait for further action
 	Welcome();
 
 	// if there is any texture loaded, destroy it. Otherwise set it to the sprite sheet
@@ -130,10 +130,38 @@ void Game::Welcome()
 			mIsRunning = false;
 			return;
 		}
-		else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN)
+		else if (event.type == SDL_KEYDOWN)
 		{
-			mTexture = nullptr;
-			return;
+			if (event.key.keysym.sym == SDLK_RETURN)
+			{
+				mTexture = nullptr;
+				return;
+			}
+			if (event.key.keysym.sym == SDLK_p)
+			{
+				Togglemusic();
+			}
+		}
+			
+		
+	}
+}
+
+void Game::Togglemusic()
+{
+	if (Mix_PlayingMusic() == 0)
+	{
+		Mix_PlayMusic(mBackground, -1);
+	}
+	else
+	{
+		if (Mix_PausedMusic() == 1)
+		{
+			Mix_ResumeMusic();
+		}
+		else
+		{
+			Mix_PauseMusic();
 		}
 	}
 }
@@ -207,21 +235,7 @@ void Game::ProcessInput()
 	// Pause/play music
 	if (state[SDL_SCANCODE_P])
 	{
-		if (Mix_PlayingMusic() == 0)
-		{
-			Mix_PlayMusic(mBackground, -1);
-		}
-		else
-		{
-			if (Mix_PausedMusic() == 1)
-			{
-				Mix_ResumeMusic();
-			}
-			else
-			{
-				Mix_PauseMusic();
-			}
-		}
+		Togglemusic();
 	}
 	IncrementRunCycle();
 }

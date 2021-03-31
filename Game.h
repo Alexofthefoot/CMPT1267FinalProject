@@ -21,6 +21,7 @@ private:
 	void ProcessInput();
 	void UpdateGame();
 	void IncrementRunCycle();
+	void Togglemusic();
 	void GenerateOutput();
 	void UpdateEnvironment();
 	void SpawnHayBales();
