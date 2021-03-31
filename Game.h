@@ -26,7 +26,6 @@ private:
 	void UpdateEnvironment();
 	void SpawnHayBales();
 	void UnloadData();
-	bool OffScreen();
 
 	SDL_Window* mWindow;
 	SDL_Renderer* mRenderer;

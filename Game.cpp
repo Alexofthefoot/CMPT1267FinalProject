@@ -116,12 +116,13 @@ bool Game::Initialize()
 void Game::Welcome()
 {
 	srand(time(0));
-	//Display welcome screen
+
+	//Display the instruction/welcome screen
 	mTexture = IMG_LoadTexture(mRenderer, "Assets/WelcomeScreen.png");
 	SDL_RenderCopy(mRenderer, mTexture, NULL, NULL);
 	SDL_RenderPresent(mRenderer);
 
-	//Wait until enter is pressed
+	//Wait for user
 	SDL_Event event;
 	while (true)
 	{
@@ -142,8 +143,6 @@ void Game::Welcome()
 				Togglemusic();
 			}
 		}
-			
-		
 	}
 }
 
@@ -193,7 +192,6 @@ void Game::ProcessInput()
 	{
 		switch (event.type)
 		{
-			// If we get an SDL_QUIT event, end loop
 		case SDL_QUIT:
 			mIsRunning = false;
 			break;
@@ -202,7 +200,7 @@ void Game::ProcessInput()
 
 	// Get state of keyboard
 	const Uint8* state = SDL_GetKeyboardState(NULL);
-	// If escape is pressed, also end loop
+
 	if (state[SDL_SCANCODE_ESCAPE])
 	{
 		mIsRunning = false;
@@ -251,11 +249,25 @@ void Game::UpdateGame()
 	mPlayerPos.y += mPlayerDir.y;
 
 	
-	// Did the player go off the screen?
-	if (OffScreen())
+	// Did the player go off the screen in the x direction?
+	if (mPlayerPos.x >= 1024 - playerWidth * 1.5) 
 	{
-		mIsRunning = false;
+		mPlayerPos.x = 1024 - playerWidth * 1.5;
 	}
+	else if (mPlayerPos.x <= 0 - playerWidth * 0.5)
+	{
+		mPlayerPos.x = -playerWidth * 0.5;
+	}
+	// in y direction?
+	if (mPlayerPos.y >= 768 - playerHeight * 1.5)
+	{
+		mPlayerPos.y = 768 - playerHeight * 1.5;
+	}
+	else if (mPlayerPos.y <= 0 - playerHeight * 0.5)
+	{
+		mPlayerPos.y = - playerHeight * 0.5;
+	}
+
 
 	UpdateEnvironment();
 }
@@ -281,17 +293,6 @@ void Game::SpawnHayBales()
 	}
 }
 
-bool Game::OffScreen()
-{
-	// offset calculated based on window offset along with centre point of image = 100 + 64
-	int offset = -164;
-	if (mPlayerPos.x <= offset || mPlayerPos.x >= 1024 + offset ||
-		mPlayerPos.y <= offset || mPlayerPos.y >= 768 + offset)
-	{
-		return true;
-	}
-	return false;
-}
 
 void Game::GenerateOutput()
 {
@@ -332,8 +333,8 @@ void Game::GenerateOutput()
 		mPlayerPos.y,			// Top left y
 		playerWidth*2,			// Width
 		playerHeight*2			// Height
-	};
-	//SDL_RenderFillRect(mRenderer, &Player_Rect);       THIS GIVES THE SQUARE AROUND THE IMAGE, NOT NEEDED!
+	};	
+	//SDL_RenderFillRect(mRenderer, &Player_Rect);												 // FOR THE THE SQUARE AROUND THE IMAGE
 
 	SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Player_Rect);
 
@@ -343,7 +344,7 @@ void Game::GenerateOutput()
 	srcRect.y = 128 * 3; //have it always facing right
 	for (int i = 0; i < mPlayerLives; i++)
 	{
-		//SDL_RenderFillRect(mRenderer, &Healthbar_Rect);        THIS GIVES THE SQUARE AROUND THE IMAGE, NOT NEEDED in final copy!
+		//SDL_RenderFillRect(mRenderer, &Healthbar_Rect);										// FOR THE SQUARE AROUND THE IMAGE
 		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Healthbar_Rect);
 		Healthbar_Rect.x += 60;
 	}
