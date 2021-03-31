@@ -2,7 +2,7 @@
 #include "SDL/SDL.h"
 #include <string>
 
-struct Vector3
+struct Vector2
 {
 	float x;
 	float y;
@@ -16,7 +16,7 @@ public:
 	int GetYPosition();
 	//bool CanCowEat();
 
-	Vector3 mHayBalePos;
+	Vector2 mHayBalePos;
 	SDL_Texture* mTexture;
 	SDL_Renderer* mRenderer;
 	int size = 32;

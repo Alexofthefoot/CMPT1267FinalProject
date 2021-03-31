@@ -88,7 +88,7 @@ bool Game::Initialize()
 		SDL_DestroyTexture(mTexture);
 		mTexture = NULL;
 	}
-	mTexture = LoadFromFile("Assets/spritesheet.png");
+	mTexture = LoadFromFile("Assets/spritesheet2.png");
 	if (mTexture == NULL)
 	{
 		SDL_Log("Unable to load png file: %s", SDL_GetError());
@@ -141,11 +141,11 @@ void Game::RunLoop()
 void Game::IncrementRunCycle()
 {
 	mCycleCount++;
-	if (mCycleCount > 6)
+	if (mCycleCount > 12)
 	{
-		mCycleCount = mCycleCount % 6;
+		mCycleCount = mCycleCount % 12;
 	}
-	mCycle = mCycleCount / 3;
+	mCycle = mCycleCount / 6;
 }
 
 void Game::ProcessInput()
@@ -193,6 +193,11 @@ void Game::ProcessInput()
 	{
 		mPlayerDir.x += 4.0f;
 		mPlayerFacing = Player_Facing_Right;
+	}
+	// Pause/play music
+	if (state[SDL_SCANCODE_S])
+	{
+		// do things
 	}
 	IncrementRunCycle();
 }
@@ -252,13 +257,37 @@ bool Game::OffScreen()
 
 void Game::GenerateOutput()
 {
-	// Set draw color to light green R   G   B   A
+	// Set background draw color to green
 	SDL_SetRenderDrawColor(mRenderer,0,	230, 0, 255);
-
 	// Clear back buffer
 	SDL_RenderClear(mRenderer);
 	
-	SDL_Rect srcRect{ 128 * mCycle , 128 * mPlayerFacing, 128, 128};
+	//First set the grassy background
+	SDL_Rect srcRect{985,0,610,460};
+	SDL_RenderCopy(mRenderer, mTexture, &srcRect, NULL);
+
+	//then hay
+	srcRect.x = 500;
+	srcRect.y = 0;
+	srcRect.w = 460;
+	srcRect.h = 450;
+
+	SDL_Rect Hay_Rect{0,0,playerWidth, playerHeight};
+
+	for (Haybale h : myHaybales)
+	{
+		Hay_Rect.x = h.GetXPosition();
+		Hay_Rect.y = h.GetYPosition();
+		//SDL_RenderFillRect(mRenderer, &Hay_Rect);
+		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Hay_Rect);
+	}
+
+
+	//then character
+	srcRect.x = 128*mCycle;
+	srcRect.y = 128*mPlayerFacing;
+	srcRect.w = 128;
+	srcRect.h = 128;
 
 	SDL_Rect Player_Rect{
 		mPlayerPos.x,			// Top left x
@@ -266,28 +295,9 @@ void Game::GenerateOutput()
 		playerWidth*2,			// Width
 		playerHeight*2			// Height
 	};
-	SDL_RenderFillRect(mRenderer, &Player_Rect);
+	//SDL_RenderFillRect(mRenderer, &Player_Rect);       THIS GIVES THE SQUARE AROUND TEH IMAGE, NOT NEEDED!
 
 	SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Player_Rect);
-
-
-	// change which part of sprite sheet 
-	srcRect.x = 500;
-	srcRect.y = 0;
-	srcRect.w = 500;
-	srcRect.h = 450;
-
-	SDL_Rect Hay_Rect{0,0,playerWidth, playerHeight};
-
-	// Draw the (randomized location) haybales
-	for (Haybale h : myHaybales)
-	{
-		Hay_Rect.x = h.GetXPosition();
-		Hay_Rect.y = h.GetYPosition();
-		SDL_RenderFillRect(mRenderer, &Hay_Rect);
-		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Hay_Rect);
-	}
-
 
 
 	// Display remaining lives/health in top corner (for now using the same haybale image)
@@ -295,7 +305,7 @@ void Game::GenerateOutput()
 	
 	for (int i = 0; i < mPlayerLives; i++)
 	{
-		SDL_RenderFillRect(mRenderer, &Healthbar_Rect);
+		//SDL_RenderFillRect(mRenderer, &Healthbar_Rect);        THIS GIVES THE SQUARE AROUND TEH IMAGE, NOT NEEDED!
 		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Healthbar_Rect);
 		Healthbar_Rect.x += 60;
 	}
