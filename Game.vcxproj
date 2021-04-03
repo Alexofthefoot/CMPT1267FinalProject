@@ -14,10 +14,12 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Haybale.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Wolf.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
     <ClInclude Include="Haybale.h" />
+    <ClInclude Include="Wolf.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BC508D87-495F-4554-932D-DD68388B63CC}</ProjectGuid>

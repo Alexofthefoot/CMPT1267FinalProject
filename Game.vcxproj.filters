@@ -16,12 +16,18 @@
     <ClCompile Include="Haybale.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Wolf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Haybale.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Wolf.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

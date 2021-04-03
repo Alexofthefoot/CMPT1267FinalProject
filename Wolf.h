@@ -1,25 +1,21 @@
 #pragma once
 #include "SDL/SDL.h"
+#include "Haybale.h"
 #include <string>
 
-struct Vector2
-{
-	float x;
-	float y;
-};
 
-class Haybale
+class Wolf
 {
+
 public:
 	void Initialize();
 	int GetXPosition();
 	int GetYPosition();
 	bool UpdatePosition();
-	bool IsClose(Vector2);
 
-	Vector2 mHayBalePos;
-	Vector2 mHayBaleDir;
+
+	Vector2 mWolfPos;
+	Vector2 mWolfDir;
 	int size;
 
 };
-

@@ -9,20 +9,19 @@ const int playerHeight = 128;
 
 enum PlayerFacing
 {
-	Player_Facing_Up = 0,		//0
-	Player_Facing_Left = 1,		//1
-	Player_Facing_Down = 2,		//2
-	Player_Facing_Right = 3,	//3
+	Player_Facing_Up ,		//0
+	Player_Facing_Left,		//1
+	Player_Facing_Down,		//2
+	Player_Facing_Right,	//3
 };
 
-enum PlayerRunCycle
-{
-	cycle = 0
-};
+//enum PlayerRunCycle
+//{
+//	cycle = 0
+//};
 
 Game::Game()
 {
-	//mSurface = nullptr;
 	mWindow = nullptr;
 	mRenderer = nullptr;
 	mTexture = nullptr;
@@ -33,7 +32,6 @@ Game::Game()
 	mCycle = 0;
 	mHayBales = 0;
 	mMaxHayBales = 3;
-	mMusicplaying = 1;
 	mChomp = nullptr;
 	mBackground = nullptr;
 }
@@ -86,7 +84,7 @@ bool Game::Initialize()
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 	mBackground = Mix_LoadMUS("Assets/jauntytune.wav");
 	mChomp = Mix_LoadWAV("assets/chewing.wav");
-	Mix_PlayMusic(mBackground, -1);
+	//Mix_PlayMusic(mBackground, -1);
 
 
 	// Display the welcome screen & wait for further action
@@ -275,23 +273,30 @@ void Game::UpdateGame()
 void Game::UpdateEnvironment()
 {
 	SpawnHayBales();
+	//for (Haybale h : myHaybales)
+	//{
+		//h.UpdatePosition();  //if returns false, the bale is offscreen and should be removed.
+	//}
+	//EatHayBales();
 }
 
 void Game::SpawnHayBales()
 {
 	if (myHaybales.size() < mMaxHayBales)
 	{
-		Haybale haybale;
-		haybale.Initialize();
-		myHaybales.push_back(haybale);
-		
+		Haybale newhaybale;
+		newhaybale.Initialize();
+		myHaybales.push_back(newhaybale);
 	}
-	printf("Number of bales: %d", myHaybales.size());
+	printf("\nNumber of bales: %d\n", myHaybales.size());
 	for (Haybale h : myHaybales)
 	{
-		printf("\n%d\n     %d\n", h.GetXPosition(), h.GetYPosition());
+		printf("position: %d, %d\n", h.GetXPosition(), h.GetYPosition());
+		//printf("direction: %f, %f\n", h.mHayBaleDir.x, h.mHayBaleDir.y);
 	}
 }
+
+//void Game::EatHayBales()
 
 
 void Game::GenerateOutput()
@@ -311,7 +316,7 @@ void Game::GenerateOutput()
 	srcRect.w = 460;
 	srcRect.h = 450;
 
-	SDL_Rect Hay_Rect{0,0,playerWidth, playerHeight};
+	SDL_Rect Hay_Rect{0,0,100, 100};
 
 	for (Haybale h : myHaybales)
 	{
@@ -380,7 +385,10 @@ void Game::UnloadData()
 		mTexture = NULL;
 	}
 }
+void Game::GameOverScreen()
+{
 
+}
 void Game::Shutdown()
 {
 	UnloadData();

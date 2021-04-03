@@ -3,6 +3,7 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_mixer.h"
 #include "Haybale.h"
+#include "Wolf.h"
 #include <string>
 #include <vector>
 #include <time.h>
@@ -25,7 +26,9 @@ private:
 	void GenerateOutput();
 	void UpdateEnvironment();
 	void SpawnHayBales();
+	//void EatHayBales();
 	void UnloadData();
+	void GameOverScreen();
 
 	SDL_Window* mWindow;
 	SDL_Renderer* mRenderer;
