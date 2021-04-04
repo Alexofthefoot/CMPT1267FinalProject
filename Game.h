@@ -25,6 +25,7 @@ private:
 	void Togglemusic();
 	void GenerateOutput();
 	void UpdateEnvironment();
+	void RemoveHaybale(Haybale);
 	void SpawnHayBales();
 	//void EatHayBales();
 	void UnloadData();
@@ -40,6 +41,8 @@ private:
 	Vector2 mPlayerDir;
 	int mPlayerFacing;
 	int mPlayerLives;
+	int playerWidth;
+	int playerHeight;
 	int mCycle;
 	int mCycleCount;
 	int mHayBales;

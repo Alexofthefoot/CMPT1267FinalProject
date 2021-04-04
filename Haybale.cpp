@@ -8,11 +8,12 @@ int randomize(int min, int max)
 
 void Haybale::Initialize()
 {
-	int minX = 0;
-	int minY = 0;
+	int minX = 20;
+	int minY = 20;
 	int maxX = 600;
 	int maxY = 600;
 	int size = randomize(1, 3);
+	bool isedible = false;
 	mHayBalePos.x = randomize(minX, maxX);
 	mHayBalePos.y = randomize(minY, maxY);
 	mHayBaleDir.x = 0.0;
@@ -49,13 +50,38 @@ int Haybale::GetYPosition()
 }
 
 
-//Check if the current haybale is within ____ distance of the item asked about
-bool Haybale::IsClose(Vector2 )
+//Check if the current haybale is within eating distance of the cow
+bool Haybale::CanCowEat(Vector2 cowposition)
 {
 	int sizeofbale = 100;
-	return true;
+	int sizeofcow = 260;
+
+	float x = (cowposition.x + sizeofcow / 2) - (mHayBalePos.x + sizeofbale / 2);
+	if (x < 0)
+	{
+		x = -x;
+	}
+	float y = (cowposition.y + sizeofcow / 2) - (mHayBalePos.y + sizeofbale / 2);
+	if (y < 0)
+	{
+		y = -y;
+	}
+	float dist = sqrtf((x*x) + (y*y));
+	
+	//printf("distance is %f\n", dist);
+	if (dist < sizeofbale / 2) //aka if distance
+	{
+		//printf("Collision!!\n");
+		return true;
+	}
+	return false;
 }
 
+
+void Haybale::Remove()
+{
+
+}
 
 //100,	// Top left x-coordinate of window
 //100,	// Top left y-coordinate of window

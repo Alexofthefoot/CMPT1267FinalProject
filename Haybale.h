@@ -15,11 +15,13 @@ public:
 	int GetXPosition();
 	int GetYPosition();
 	bool UpdatePosition();
-	bool IsClose(Vector2);
+	bool CanCowEat(Vector2);;
+	void Remove();
 
 	Vector2 mHayBalePos;
 	Vector2 mHayBaleDir;
 	int size;
+	bool isedible;
 
 };
 

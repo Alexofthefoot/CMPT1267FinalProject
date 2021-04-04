@@ -2,10 +2,7 @@
 #include "Game.h"
 #include "SDL/SDL_image.h"
 
-
-
-const int playerWidth = 128;
-const int playerHeight = 128;
+using namespace std;
 
 enum PlayerFacing
 {
@@ -34,6 +31,8 @@ Game::Game()
 	mMaxHayBales = 3;
 	mChomp = nullptr;
 	mBackground = nullptr;
+	playerWidth = 130;
+	playerHeight = 130;
 }
 
 bool Game::Initialize()
@@ -83,8 +82,8 @@ bool Game::Initialize()
 	// Set up the music and sound effects
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 	mBackground = Mix_LoadMUS("Assets/jauntytune.wav");
-	mChomp = Mix_LoadWAV("assets/chewing.wav");
-	//Mix_PlayMusic(mBackground, -1);
+	mChomp = Mix_LoadWAV("Assets/Cow2.wav");
+	Mix_PlayMusic(mBackground, -1);
 
 
 	// Display the welcome screen & wait for further action
@@ -249,7 +248,7 @@ void Game::UpdateGame()
 	
 	// Did the player go off the screen in the x direction?
 	if (mPlayerPos.x >= 1024 - playerWidth * 1.5) 
-	{
+	{	
 		mPlayerPos.x = 1024 - playerWidth * 1.5;
 	}
 	else if (mPlayerPos.x <= 0 - playerWidth * 0.5)
@@ -277,7 +276,50 @@ void Game::UpdateEnvironment()
 	//{
 		//h.UpdatePosition();  //if returns false, the bale is offscreen and should be removed.
 	//}
-	//EatHayBales();
+	//Eat Hay Bales
+
+	//vector<Haybale>::iterator it;
+	//it = remove_if(myHaybales.begin(), myHaybales.end(), it.IsEaten());
+
+
+	//vector<Haybale>::iterator iter;
+
+	/*
+	for (Haybale h : myHaybales)
+	{
+		if (h.CanCowEat(mPlayerPos))
+			//Haybale* hptr = h;
+			//RemoveHaybale(hptr);
+			//Play the sound effect
+			Mix_PlayChannel(-1, mChomp, 0);
+	}
+	*/
+
+	for (int h=0; h<myHaybales.size(); h++)
+	//for (auto iter = myHaybales.begin(); iter != myHaybales.end();)
+	{
+		//printf("now checking haybale %d\n", h);
+		if (myHaybales[h].CanCowEat(mPlayerPos))
+		{
+			printf("Collision Happened! with bale %d\n", h);
+			Mix_PlayChannel(-1, mChomp, 0);
+			myHaybales.erase(myHaybales.begin() + h);
+			//put to the end
+			//myHaybales.pop_back();
+		}
+	}
+}
+
+void Game::RemoveHaybale(Haybale hay)
+{
+	/*
+	auto iter = std::find(myHaybales.begin(),
+		myHaybales.end(), hay);
+	if (iter != myHaybales.end())
+	{
+		myHaybales.erase(iter);
+	}
+	*/
 }
 
 void Game::SpawnHayBales()
@@ -288,10 +330,10 @@ void Game::SpawnHayBales()
 		newhaybale.Initialize();
 		myHaybales.push_back(newhaybale);
 	}
-	printf("\nNumber of bales: %d\n", myHaybales.size());
+	//printf("\nNumber of bales: %d\n", myHaybales.size());
 	for (Haybale h : myHaybales)
 	{
-		printf("position: %d, %d\n", h.GetXPosition(), h.GetYPosition());
+		//printf("position: %d, %d\n", h.GetXPosition(), h.GetYPosition());
 		//printf("direction: %f, %f\n", h.mHayBaleDir.x, h.mHayBaleDir.y);
 	}
 }
@@ -385,10 +427,12 @@ void Game::UnloadData()
 		mTexture = NULL;
 	}
 }
+
 void Game::GameOverScreen()
 {
-
+	int this_is_nothing_can_delete = 7;
 }
+
 void Game::Shutdown()
 {
 	UnloadData();
