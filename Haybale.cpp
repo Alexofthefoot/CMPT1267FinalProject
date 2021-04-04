@@ -10,8 +10,8 @@ void Haybale::Initialize()
 {
 	int minX = 20;
 	int minY = 20;
-	int maxX = 600;
-	int maxY = 600;
+	int maxX = 1024 - 100 - 20;
+	int maxY = 768 - 100 - 20;
 	int size = randomize(1, 3);
 	bool isedible = false;
 	mHayBalePos.x = randomize(minX, maxX);

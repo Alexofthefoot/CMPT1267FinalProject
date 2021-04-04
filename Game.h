@@ -47,7 +47,10 @@ private:
 	int mHayBales;
 	int mMaxHayBales;
 	std::vector<Haybale> myHaybales;
+	std::vector<Wolf> myWolves;
 	Mix_Chunk* mChomp;
 	Mix_Music* mBackground;
 	int mMusicplaying;
+	int gamescore;
+	
 };

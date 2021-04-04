@@ -33,6 +33,7 @@ Game::Game()
 	mBackground = nullptr;
 	playerWidth = 130;
 	playerHeight = 130;
+	gamescore = 0;
 }
 
 bool Game::Initialize()
@@ -107,6 +108,12 @@ bool Game::Initialize()
 	mPlayerPos.y = 768.0f / 2.0f;
 	mPlayerDir.x = 0.0f;
 	mPlayerDir.y = 0.0;
+
+	//Create wolf
+	Wolf newwolf;
+	newwolf.Initialize();
+	myWolves.push_back(newwolf);
+
 	return true;
 }
 
@@ -271,14 +278,8 @@ void Game::UpdateGame()
 
 void Game::UpdateEnvironment()
 {
+	//Spawn haybales
 	SpawnHayBales();
-	//for (Haybale h : myHaybales)
-	//{
-		//h.UpdatePosition();  //if returns false, the bale is offscreen and should be removed.
-	//}
-	//Eat Hay Bales
-
-
 
 	for (int h=0; h<myHaybales.size(); h++)
 	//for (auto iter = myHaybales.begin(); iter != myHaybales.end();)
@@ -305,15 +306,7 @@ void Game::SpawnHayBales()
 		newhaybale.Initialize();
 		myHaybales.push_back(newhaybale);
 	}
-	//printf("\nNumber of bales: %d\n", myHaybales.size());
-	for (Haybale h : myHaybales)
-	{
-		//printf("position: %d, %d\n", h.GetXPosition(), h.GetYPosition());
-		//printf("direction: %f, %f\n", h.mHayBaleDir.x, h.mHayBaleDir.y);
-	}
 }
-
-//void Game::EatHayBales()
 
 
 void Game::GenerateOutput()
@@ -370,6 +363,11 @@ void Game::GenerateOutput()
 		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Healthbar_Rect);
 		Healthbar_Rect.x += 60;
 	}
+	//finally the predator image 
+	SDL_Rect Wolf_Rect{
+
+	};
+
 
 	// Swap front buffer and back buffer (making it all visible)
 	SDL_RenderPresent(mRenderer);
