@@ -15,7 +15,7 @@ public:
 	int GetXPosition();
 	int GetYPosition();
 	bool UpdatePosition();
-	bool CanCowEat(Vector2);;
+	bool IsCloseto(Vector2);;
 	void Remove();
 
 	Vector2 mHayBalePos;

@@ -278,49 +278,24 @@ void Game::UpdateEnvironment()
 	//}
 	//Eat Hay Bales
 
-	//vector<Haybale>::iterator it;
-	//it = remove_if(myHaybales.begin(), myHaybales.end(), it.IsEaten());
 
-
-	//vector<Haybale>::iterator iter;
-
-	/*
-	for (Haybale h : myHaybales)
-	{
-		if (h.CanCowEat(mPlayerPos))
-			//Haybale* hptr = h;
-			//RemoveHaybale(hptr);
-			//Play the sound effect
-			Mix_PlayChannel(-1, mChomp, 0);
-	}
-	*/
 
 	for (int h=0; h<myHaybales.size(); h++)
 	//for (auto iter = myHaybales.begin(); iter != myHaybales.end();)
 	{
 		//printf("now checking haybale %d\n", h);
-		if (myHaybales[h].CanCowEat(mPlayerPos))
+		if (myHaybales[h].IsCloseto(mPlayerPos))
 		{
 			printf("Collision Happened! with bale %d\n", h);
 			Mix_PlayChannel(-1, mChomp, 0);
 			myHaybales.erase(myHaybales.begin() + h);
+			//swap
 			//put to the end
 			//myHaybales.pop_back();
 		}
 	}
 }
 
-void Game::RemoveHaybale(Haybale hay)
-{
-	/*
-	auto iter = std::find(myHaybales.begin(),
-		myHaybales.end(), hay);
-	if (iter != myHaybales.end())
-	{
-		myHaybales.erase(iter);
-	}
-	*/
-}
 
 void Game::SpawnHayBales()
 {

@@ -25,7 +25,6 @@ private:
 	void Togglemusic();
 	void GenerateOutput();
 	void UpdateEnvironment();
-	void RemoveHaybale(Haybale);
 	void SpawnHayBales();
 	//void EatHayBales();
 	void UnloadData();

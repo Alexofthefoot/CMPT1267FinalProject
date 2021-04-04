@@ -51,17 +51,17 @@ int Haybale::GetYPosition()
 
 
 //Check if the current haybale is within eating distance of the cow
-bool Haybale::CanCowEat(Vector2 cowposition)
+bool Haybale::IsCloseto(Vector2 position)
 {
 	int sizeofbale = 100;
 	int sizeofcow = 260;
 
-	float x = (cowposition.x + sizeofcow / 2) - (mHayBalePos.x + sizeofbale / 2);
+	float x = (position.x + sizeofcow / 2) - (mHayBalePos.x + sizeofbale / 2);
 	if (x < 0)
 	{
 		x = -x;
 	}
-	float y = (cowposition.y + sizeofcow / 2) - (mHayBalePos.y + sizeofbale / 2);
+	float y = (position.y + sizeofcow / 2) - (mHayBalePos.y + sizeofbale / 2);
 	if (y < 0)
 	{
 		y = -y;
