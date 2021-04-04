@@ -4,7 +4,7 @@
 #include <string>
 
 
-class Wolf
+class Enemy
 {
 
 public:
@@ -14,8 +14,8 @@ public:
 	bool UpdatePosition();
 
 
-	Vector2 mWolfPos;
-	Vector2 mWolfDir;
+	Vector2 mEnemyPos;
+	Vector2 mEnemyDir;
 	int size;
 
 };

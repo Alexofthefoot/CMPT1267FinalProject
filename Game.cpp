@@ -96,7 +96,7 @@ bool Game::Initialize()
 		SDL_DestroyTexture(mTexture);
 		mTexture = NULL;
 	}
-	mTexture = LoadFromFile("Assets/spritesheet2.png");
+	mTexture = LoadFromFile("Assets/spritesheet.png");
 	if (mTexture == NULL)
 	{
 		SDL_Log("Unable to load png file: %s", SDL_GetError());
@@ -109,10 +109,10 @@ bool Game::Initialize()
 	mPlayerDir.x = 0.0f;
 	mPlayerDir.y = 0.0;
 
-	//Create wolf
-	Wolf newwolf;
-	newwolf.Initialize();
-	myWolves.push_back(newwolf);
+	//Create bear
+	Enemy newenemy;
+	newenemy.Initialize();
+	myEnemies.push_back(newenemy);
 
 	return true;
 }
@@ -272,6 +272,7 @@ void Game::UpdateGame()
 		mPlayerPos.y = - playerHeight * 0.5;
 	}
 
+	//Update Enemies()
 
 	UpdateEnvironment();
 }
@@ -332,12 +333,12 @@ void Game::GenerateOutput()
 	{
 		Hay_Rect.x = h.GetXPosition();
 		Hay_Rect.y = h.GetYPosition();
-		//SDL_RenderFillRect(mRenderer, &Hay_Rect);
+		//SDL_RenderFillRect(mRenderer, &Hay_Rect);												 // FOR WHEN I WANT THE THE SQUARE AROUND THE IMAGE
 		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Hay_Rect);
 	}
 
 
-	//then character
+	//then the cow character
 	srcRect.x = 128*mCycle;
 	srcRect.y = 128*mPlayerFacing;
 	srcRect.w = 128;
@@ -349,7 +350,7 @@ void Game::GenerateOutput()
 		playerWidth*2,			// Width
 		playerHeight*2			// Height
 	};	
-	//SDL_RenderFillRect(mRenderer, &Player_Rect);												 // FOR THE THE SQUARE AROUND THE IMAGE
+	//SDL_RenderFillRect(mRenderer, &Player_Rect);												 // FOR WHEN I WANT THE THE SQUARE AROUND THE IMAGE
 
 	SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Player_Rect);
 
@@ -359,14 +360,29 @@ void Game::GenerateOutput()
 	srcRect.y = 128 * 3; //have it always facing right
 	for (int i = 0; i < mPlayerLives; i++)
 	{
-		//SDL_RenderFillRect(mRenderer, &Healthbar_Rect);										// FOR THE SQUARE AROUND THE IMAGE
+		//SDL_RenderFillRect(mRenderer, &Healthbar_Rect);										// FOR WHEN I WANT THE THE SQUARE AROUND THE IMAGE
 		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Healthbar_Rect);
 		Healthbar_Rect.x += 60;
 	}
-	//finally the predator image 
-	SDL_Rect Wolf_Rect{
 
-	};
+
+	//finally the wolf/bear? image (set up in a loop to allow for multiple enemies in future)
+	SDL_Rect Enemy_Rect{	0,0,0,0 };
+	srcRect.x = 1595;
+	srcRect.y = 0;
+	srcRect.w = 875;
+	srcRect.h = 555;
+
+	for (Enemy e : myEnemies)
+	{
+		Enemy_Rect.x = e.GetXPosition();
+		Enemy_Rect.y = e.GetYPosition();
+		Enemy_Rect.w = 100;
+		Enemy_Rect.h = 100;
+		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Enemy_Rect);
+	}
+
+	
 
 
 	// Swap front buffer and back buffer (making it all visible)

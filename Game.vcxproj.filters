@@ -16,7 +16,7 @@
     <ClCompile Include="Haybale.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Wolf.cpp">
+    <ClCompile Include="Enemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -27,7 +27,7 @@
     <ClInclude Include="Haybale.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Wolf.h">
+    <ClInclude Include="Enemy.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

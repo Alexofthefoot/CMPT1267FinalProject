@@ -3,7 +3,7 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_mixer.h"
 #include "Haybale.h"
-#include "Wolf.h"
+#include "Enemy.h"
 #include <string>
 #include <vector>
 #include <time.h>
@@ -26,7 +26,6 @@ private:
 	void GenerateOutput();
 	void UpdateEnvironment();
 	void SpawnHayBales();
-	//void EatHayBales();
 	void UnloadData();
 	void GameOverScreen();
 
@@ -47,7 +46,7 @@ private:
 	int mHayBales;
 	int mMaxHayBales;
 	std::vector<Haybale> myHaybales;
-	std::vector<Wolf> myWolves;
+	std::vector<Enemy> myEnemies;
 	Mix_Chunk* mChomp;
 	Mix_Music* mBackground;
 	int mMusicplaying;
