@@ -12,17 +12,11 @@ enum PlayerFacing
 	Player_Facing_Right,	//3
 };
 
-//enum PlayerRunCycle
-//{
-//	cycle = 0
-//};
-
 Game::Game()
 {
 	mWindow = nullptr;
 	mRenderer = nullptr;
 	mTexture = nullptr;
-	mTicksCount = 0;
 	mIsRunning = true;
 	mPlayerFacing = Player_Facing_Right; 
 	mPlayerLives = 3;
@@ -129,7 +123,7 @@ void Game::Welcome()
 	SDL_RenderCopy(mRenderer, mTexture, NULL, NULL);
 	SDL_RenderPresent(mRenderer);
 
-	//Wait for user
+	//Wait for user to do something
 	SDL_Event event;
 	while (true)
 	{
@@ -180,6 +174,7 @@ void Game::RunLoop()
 		UpdateGame();
 		GenerateOutput();
 	}
+	void GameOverScreen();
 }
 
 void Game::IncrementRunCycle()
@@ -247,10 +242,6 @@ void Game::ProcessInput()
 
 void Game::UpdateGame()
 {
-	// Update tick counts (for next frame)
-	mTicksCount = SDL_GetTicks();
-
-
 	// Update player position based on direction
 	mPlayerPos.x += mPlayerDir.x;
 	mPlayerPos.y += mPlayerDir.y;
@@ -315,7 +306,6 @@ void Game::UpdateEnvironment()
 	}
 }
 
-
 void Game::SpawnHayBales()
 {
 	if (myHaybales.size() < mMaxHayBales)
@@ -335,80 +325,60 @@ void Game::CowInjury()
 
 void Game::GenerateOutput()
 {
-	// Set background draw color to green
-	SDL_SetRenderDrawColor(mRenderer,0,	230, 0, 255);
-	// Clear back buffer
 	SDL_RenderClear(mRenderer);
 	
-	//First set the grassy background
-	SDL_Rect srcRect{985,0,610,460};
-	SDL_RenderCopy(mRenderer, mTexture, &srcRect, NULL);
+	// First the grassy background
+	SDL_Rect src_Rect{ 985, 0, 610, 460 };
+	SDL_RenderCopy(mRenderer, mTexture, &src_Rect, NULL);
 
-	//then the haybale images
-	srcRect.x = 500;
-	srcRect.y = 0;
-	srcRect.w = 460;
-	srcRect.h = 450;
+	// Next the images of haybales
+	src_Rect.x = 500;
+	src_Rect.y = 0;
+	src_Rect.w = 460;
+	src_Rect.h = 450;
 
-	SDL_Rect Hay_Rect{0,0,100, 100};
+	SDL_Rect Hay_Rect { 0,0,100, 100 };
 
 	for (Haybale h : myHaybales)
 	{
 		Hay_Rect.x = h.GetXPosition();
 		Hay_Rect.y = h.GetYPosition();
-		//SDL_RenderFillRect(mRenderer, &Hay_Rect);												 // FOR WHEN I WANT THE THE SQUARE AROUND THE IMAGE
-		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Hay_Rect);
+		SDL_RenderCopy(mRenderer, mTexture, &src_Rect, &Hay_Rect);
 	}
 
+	// Next the cow image/main character
+	src_Rect.x = 128*mCycle;
+	src_Rect.y = 128*mPlayerFacing;
+	src_Rect.w = 128;
+	src_Rect.h = 128;
 
-	//then the cow/main character
-	srcRect.x = 128*mCycle;
-	srcRect.y = 128*mPlayerFacing;
-	srcRect.w = 128;
-	srcRect.h = 128;
-
-	SDL_Rect Player_Rect{
-		mPlayerPos.x,
-		mPlayerPos.y,		
-		playerWidth*2,			
-		playerHeight*2		
-	};	
-	//SDL_RenderFillRect(mRenderer, &Player_Rect);												 // FOR WHEN I WANT THE THE SQUARE AROUND THE IMAGE
-
-	SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Player_Rect);
+	SDL_Rect Player_Rect{ mPlayerPos.x, mPlayerPos.y, playerWidth*2, playerHeight*2 };	
+	SDL_RenderCopy(mRenderer, mTexture, &src_Rect, &Player_Rect);
 
 
-	// Display remaining lives/health in top corner (for now using the same haybale image)
-	SDL_Rect Healthbar_Rect{ 5,5,50,50 };
-	srcRect.y = 128 * 3; //have it always facing right
+	// Next display the health bar / lives remaining
+	SDL_Rect Healthbar_Rect{ 5, 5, 75, 75 };
+	src_Rect.y = 128 * 3; //keep the animation but always facing right
 	for (int i = 0; i < mPlayerLives; i++)
 	{
-		//SDL_RenderFillRect(mRenderer, &Healthbar_Rect);										// FOR WHEN I WANT THE THE SQUARE AROUND THE IMAGE
-		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Healthbar_Rect);
+		SDL_RenderCopy(mRenderer, mTexture, &src_Rect, &Healthbar_Rect);
 		Healthbar_Rect.x += 60;
 	}
 
-
-	//finally the wolf/bear? image (set up in a loop to allow for multiple enemies in future)
-	SDL_Rect Enemy_Rect{	0,0,0,0 };
-	srcRect.x = 1595;
-	srcRect.y = 0;
-	srcRect.w = 845;
-	srcRect.h = 700;
+	//Finally display the enemy/bear image
+	SDL_Rect Enemy_Rect{ 0, 0, enemyWidth, enemyHeight };
+	src_Rect.x = 1595;
+	src_Rect.y = 0;
+	src_Rect.w = 845;
+	src_Rect.h = 700;
 
 	for (Enemy e : myEnemies)
-	{
+	{	//using a loop so I can add multiple enemies later if desired 
 		Enemy_Rect.x = e.GetXPosition();
 		Enemy_Rect.y = e.GetYPosition();
-		Enemy_Rect.w = enemyWidth;
-		Enemy_Rect.h = enemyHeight;
-		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Enemy_Rect);
+		SDL_RenderCopy(mRenderer, mTexture, &src_Rect, &Enemy_Rect);
 	}
 
-	
-
-
-	// Swap front buffer and back buffer (making it all visible)
 	SDL_RenderPresent(mRenderer);
 }
 
@@ -442,14 +412,13 @@ void Game::UnloadData()
 
 void Game::GameOverScreen()
 {
-	int this_is_placeholder = 7;
+	int i_am_a_placeholder = 4;
 }
 
 void Game::Shutdown()
 {
 	UnloadData();
 	SDL_DestroyRenderer(mRenderer);
-	//SDL_FreeSurface(mSurface);
 	SDL_DestroyWindow(mWindow);
 	IMG_Quit();
 	SDL_Quit();
