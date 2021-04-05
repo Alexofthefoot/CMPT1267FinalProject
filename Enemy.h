@@ -13,7 +13,10 @@ public:
 	int GetYPosition();
 	void UpdatePosition(Vector2);
 	bool CanAttack(Vector2);
+	void ResetPosition(Vector2);
 
+private:
+	float Getdistance(Vector2, Vector2);
 	Vector2 mEnemyPos;
 	Vector2 mEnemyDir;
 

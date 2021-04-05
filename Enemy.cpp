@@ -2,12 +2,35 @@
 #include <time.h>
 
 
+//return the distance between 2 points
+float Enemy::Getdistance(Vector2 pos1, Vector2 pos2)
+{
+	return 0.0;
+}
+
 void Enemy::Initialize()
 {
 	mEnemyPos.x = 800.0;
 	mEnemyPos.y = 600.0;
-	mEnemyDir.x = 4.0;
-	mEnemyDir.y = 4.0;
+	mEnemyDir.x = 2.0;
+	mEnemyDir.y = 2.0;
+}
+
+//Used after a collision to give the player a chance to start over
+void Enemy::ResetPosition(Vector2 cowposition)
+{
+	//if player is left of centre
+	if (cowposition.x < 1024 / 2)
+	{
+		mEnemyPos.x = 600.0;
+		mEnemyPos.y = 600.0;
+	}
+	//if player is right of centre
+	if (cowposition.x >= 1024 / 2)
+	{
+		mEnemyPos.x = 50.0;
+		mEnemyPos.y = 50.0;
+	}
 }
 
 int Enemy::GetXPosition()
@@ -20,6 +43,7 @@ int Enemy::GetYPosition()
 	return mEnemyPos.y;
 }
 
+//I am responsible for updating position (based on pre-determined direction)
 void Enemy::UpdatePosition(Vector2 cowposition)
 {//for now just bouncing around like pong
 	mEnemyPos.x += mEnemyDir.x;
@@ -29,10 +53,10 @@ void Enemy::UpdatePosition(Vector2 cowposition)
 	mEnemyPos.y += mEnemyDir.y;
 	if (mEnemyPos.y <= 0 || mEnemyPos.y >= 768 - 140)
 		mEnemyDir.y = -mEnemyDir.y;
-
-	printf("enemy position is now %f, %f\n", mEnemyPos.x, mEnemyPos.y);
 }
 
+
+//I am responsible for changing direction
 bool Enemy::CanAttack(Vector2 cowposition)
 {
 	int sizeofenemy = 145;

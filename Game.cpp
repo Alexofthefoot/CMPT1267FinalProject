@@ -275,18 +275,22 @@ void Game::UpdateGame()
 		mPlayerPos.y = - playerHeight * 0.5;
 	}
 
-	//Update the Enemies (for now only 1)
-	//for (Enemy e : myEnemies)
-	//{
-		//e.UpdatePosition();
-	//}
-
 	for (int e=0; e<myEnemies.size(); e++)
 	{
 		myEnemies[e].UpdatePosition(mPlayerPos);
 		if (myEnemies[e].CanAttack(mPlayerPos))
 		{
+			//Some sound
 			//some injury occurs
+			mPlayerLives--;
+			//reset bear
+			myEnemies[e].ResetPosition(mPlayerPos);
+			if (mPlayerLives < 0)
+			{
+				mIsRunning = false;
+			}
+	
+			//or perhaps game over
 		}
 	}
 
@@ -298,18 +302,15 @@ void Game::UpdateEnvironment()
 	//Spawn haybales
 	SpawnHayBales();
 
+	//Check for collision between player/haybales
 	for (int h=0; h<myHaybales.size(); h++)
-	//for (auto iter = myHaybales.begin(); iter != myHaybales.end();)
 	{
-		//printf("now checking haybale %d\n", h);
 		if (myHaybales[h].IsCloseto(mPlayerPos))
 		{
-			printf("Collision Happened! with bale %d\n", h);
+			//play the sound effect, update the score, and remove the haybale in question
 			Mix_PlayChannel(-1, mChomp, 0);
+			gamescore += 5;
 			myHaybales.erase(myHaybales.begin() + h);
-			//swap
-			//put to the end
-			//myHaybales.pop_back();
 		}
 	}
 }
