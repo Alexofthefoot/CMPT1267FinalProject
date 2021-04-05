@@ -41,6 +41,8 @@ private:
 	int mPlayerLives;
 	int playerWidth;
 	int playerHeight;
+	int enemyWidth;
+	int enemyHeight;
 	int mCycle;
 	int mCycleCount;
 	int mHayBales;

@@ -13,7 +13,6 @@ void Haybale::Initialize()
 	int maxX = 1024 - 100 - 20;
 	int maxY = 768 - 100 - 20;
 	int size = randomize(1, 3);
-	bool isedible = false;
 	mHayBalePos.x = randomize(minX, maxX);
 	mHayBalePos.y = randomize(minY, maxY);
 	mHayBaleDir.x = 0.0;
@@ -80,7 +79,7 @@ bool Haybale::IsCloseto(Vector2 position)
 
 void Haybale::Remove()
 {
-
+	int i_am_a_placeholder = 3;
 }
 
 //100,	// Top left x-coordinate of window

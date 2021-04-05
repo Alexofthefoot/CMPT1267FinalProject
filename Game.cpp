@@ -26,6 +26,7 @@ Game::Game()
 	mIsRunning = true;
 	mPlayerFacing = Player_Facing_Right; 
 	mPlayerLives = 3;
+	gamescore = 0;
 	mCycle = 0;
 	mHayBales = 0;
 	mMaxHayBales = 3;
@@ -33,7 +34,9 @@ Game::Game()
 	mBackground = nullptr;
 	playerWidth = 130;
 	playerHeight = 130;
-	gamescore = 0;
+	enemyWidth = 150;
+	enemyHeight = 140;
+	
 }
 
 bool Game::Initialize()
@@ -113,6 +116,7 @@ bool Game::Initialize()
 	Enemy newenemy;
 	newenemy.Initialize();
 	myEnemies.push_back(newenemy);
+	printf("size of myenemies: %d\n", myEnemies.size());
 
 	return true;
 }
@@ -272,7 +276,16 @@ void Game::UpdateGame()
 		mPlayerPos.y = - playerHeight * 0.5;
 	}
 
-	//Update Enemies()
+	//Update the Enemies (for now only 1)
+	//for (Enemy e : myEnemies)
+	//{
+		//e.UpdatePosition();
+	//}
+
+	for (int e=0; e<myEnemies.size(); e++)
+	{
+		myEnemies[e].UpdatePosition();
+	}
 
 	UpdateEnvironment();
 }
@@ -321,7 +334,7 @@ void Game::GenerateOutput()
 	SDL_Rect srcRect{985,0,610,460};
 	SDL_RenderCopy(mRenderer, mTexture, &srcRect, NULL);
 
-	//then hay
+	//then the haybale images
 	srcRect.x = 500;
 	srcRect.y = 0;
 	srcRect.w = 460;
@@ -338,17 +351,17 @@ void Game::GenerateOutput()
 	}
 
 
-	//then the cow character
+	//then the cow/main character
 	srcRect.x = 128*mCycle;
 	srcRect.y = 128*mPlayerFacing;
 	srcRect.w = 128;
 	srcRect.h = 128;
 
 	SDL_Rect Player_Rect{
-		mPlayerPos.x,			// Top left x
-		mPlayerPos.y,			// Top left y
-		playerWidth*2,			// Width
-		playerHeight*2			// Height
+		mPlayerPos.x,
+		mPlayerPos.y,		
+		playerWidth*2,			
+		playerHeight*2		
 	};	
 	//SDL_RenderFillRect(mRenderer, &Player_Rect);												 // FOR WHEN I WANT THE THE SQUARE AROUND THE IMAGE
 
@@ -370,15 +383,15 @@ void Game::GenerateOutput()
 	SDL_Rect Enemy_Rect{	0,0,0,0 };
 	srcRect.x = 1595;
 	srcRect.y = 0;
-	srcRect.w = 875;
-	srcRect.h = 555;
+	srcRect.w = 845;
+	srcRect.h = 700;
 
 	for (Enemy e : myEnemies)
 	{
 		Enemy_Rect.x = e.GetXPosition();
 		Enemy_Rect.y = e.GetYPosition();
-		Enemy_Rect.w = 100;
-		Enemy_Rect.h = 100;
+		Enemy_Rect.w = enemyWidth;
+		Enemy_Rect.h = enemyHeight;
 		SDL_RenderCopy(mRenderer, mTexture, &srcRect, &Enemy_Rect);
 	}
 
@@ -419,7 +432,7 @@ void Game::UnloadData()
 
 void Game::GameOverScreen()
 {
-	int this_is_nothing_can_delete = 7;
+	int this_is_placeholder = 7;
 }
 
 void Game::Shutdown()

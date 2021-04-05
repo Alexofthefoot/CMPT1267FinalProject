@@ -11,11 +11,10 @@ public:
 	void Initialize();
 	int GetXPosition();
 	int GetYPosition();
-	bool UpdatePosition();
-
+	void UpdatePosition();
+	bool CanAttack(Vector2);
 
 	Vector2 mEnemyPos;
 	Vector2 mEnemyDir;
-	int size;
 
 };

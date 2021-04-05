@@ -20,8 +20,7 @@ public:
 
 	Vector2 mHayBalePos;
 	Vector2 mHayBaleDir;
-	int size;
-	bool isedible;
+
 
 };
 

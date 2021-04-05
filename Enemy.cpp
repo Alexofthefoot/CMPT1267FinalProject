@@ -2,14 +2,14 @@
 #include <time.h>
 
 
-
 void Enemy::Initialize()
 {
-	mEnemyPos.x = 10.0;
-	mEnemyPos.y = 10.0;
-	mEnemyDir.x = 0.0;
-	mEnemyDir.y = 0.0;
+	mEnemyPos.x = 800.0;
+	mEnemyPos.y = 600.0;
+	mEnemyDir.x = 4.0;
+	mEnemyDir.y = 4.0;
 }
+
 int Enemy::GetXPosition()
 {
 	return mEnemyPos.x;
@@ -20,7 +20,41 @@ int Enemy::GetYPosition()
 	return mEnemyPos.y;
 }
 
-bool Enemy::UpdatePosition()
+void Enemy::UpdatePosition()
+{//for now just bouncing around like pong
+	mEnemyPos.x += mEnemyDir.x;
+	if (mEnemyPos.x <= 0 || mEnemyPos.x >= 1024 - 150)
+		mEnemyDir.x = -mEnemyDir.x;
+
+	mEnemyPos.y += mEnemyDir.y;
+	if (mEnemyPos.y <= 0 || mEnemyPos.y >= 768 - 140)
+		mEnemyDir.y = -mEnemyDir.y;
+
+	printf("enemy position is now %f, %f\n", mEnemyPos.x, mEnemyPos.y);
+}
+
+bool Enemy::CanAttack(Vector2 cowposition)
 {
-	return true;
+	int sizeofenemy = 145;
+	int sizeofcow = 260;
+
+	float x = (cowposition.x + sizeofcow / 2) - (mEnemyPos.x + sizeofenemy / 2);
+	if (x < 0)
+	{
+		x = -x;
+	}
+	float y = (cowposition.y + sizeofcow / 2) - (mEnemyPos.y + sizeofenemy / 2);
+	if (y < 0)
+	{
+		y = -y;
+	}
+	float dist = sqrtf((x * x) + (y * y));
+
+	//printf("distance is %f\n", dist);
+	if (dist < sizeofenemy / 2) //aka if distance
+	{
+		//printf("Collision!!\n");
+		return true;
+	}
+	return false;
 }
