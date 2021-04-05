@@ -11,7 +11,7 @@ public:
 	void Initialize();
 	int GetXPosition();
 	int GetYPosition();
-	void UpdatePosition();
+	void UpdatePosition(Vector2);
 	bool CanAttack(Vector2);
 
 	Vector2 mEnemyPos;

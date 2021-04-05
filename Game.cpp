@@ -36,7 +36,6 @@ Game::Game()
 	playerHeight = 130;
 	enemyWidth = 150;
 	enemyHeight = 140;
-	
 }
 
 bool Game::Initialize()
@@ -284,7 +283,11 @@ void Game::UpdateGame()
 
 	for (int e=0; e<myEnemies.size(); e++)
 	{
-		myEnemies[e].UpdatePosition();
+		myEnemies[e].UpdatePosition(mPlayerPos);
+		if (myEnemies[e].CanAttack(mPlayerPos))
+		{
+			//some injury occurs
+		}
 	}
 
 	UpdateEnvironment();
@@ -322,6 +325,12 @@ void Game::SpawnHayBales()
 	}
 }
 
+void Game::CowInjury()
+{
+	//show "OUCH" text above the character
+	//pause for a moment
+	//reset bear
+}
 
 void Game::GenerateOutput()
 {

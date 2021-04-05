@@ -20,7 +20,7 @@ int Enemy::GetYPosition()
 	return mEnemyPos.y;
 }
 
-void Enemy::UpdatePosition()
+void Enemy::UpdatePosition(Vector2 cowposition)
 {//for now just bouncing around like pong
 	mEnemyPos.x += mEnemyDir.x;
 	if (mEnemyPos.x <= 0 || mEnemyPos.x >= 1024 - 150)
@@ -53,7 +53,8 @@ bool Enemy::CanAttack(Vector2 cowposition)
 	//printf("distance is %f\n", dist);
 	if (dist < sizeofenemy / 2) //aka if distance
 	{
-		//printf("Collision!!\n");
+		//for now just freeze so I know its happening
+		SDL_Delay(50);
 		return true;
 	}
 	return false;

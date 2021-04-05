@@ -17,6 +17,7 @@ public:
 	void RunLoop();
 	void Shutdown();
 	SDL_Texture* LoadFromFile(std::string);
+
 private:
 	void Welcome();
 	void ProcessInput();
@@ -27,6 +28,7 @@ private:
 	void UpdateEnvironment();
 	void SpawnHayBales();
 	void UnloadData();
+	void CowInjury();
 	void GameOverScreen();
 
 	SDL_Window* mWindow;
