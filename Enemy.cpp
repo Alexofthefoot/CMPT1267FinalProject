@@ -2,7 +2,6 @@
 #include <time.h>
 
 
-//return the distance between 2 points
 float Enemy::Getdistance(Vector2 pos1, Vector2 pos2)
 {
 	return 0.0;
@@ -74,11 +73,9 @@ bool Enemy::CanAttack(Vector2 cowposition)
 	}
 	float dist = sqrtf((x * x) + (y * y));
 
-	//printf("distance is %f\n", dist);
+
 	if (dist < sizeofenemy / 2) //aka if distance
 	{
-		//for now just freeze so I know its happening
-		SDL_Delay(50);
 		return true;
 	}
 	return false;

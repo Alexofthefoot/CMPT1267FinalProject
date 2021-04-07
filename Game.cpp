@@ -2,7 +2,7 @@
 #include "Game.h"
 #include "SDL/SDL_image.h"
 
-using namespace std;
+//using namespace std;
 
 enum PlayerFacing
 {
@@ -17,19 +17,25 @@ Game::Game()
 	mWindow = nullptr;
 	mRenderer = nullptr;
 	mTexture = nullptr;
+	mFontTexture1 = nullptr; //players score, updated every haybale
+	mFontTexture2 = nullptr; // Ouch!
+	mChomp = nullptr;
+	mBackground = nullptr;
+	mFont = nullptr;
+
 	mIsRunning = true;
 	mPlayerFacing = Player_Facing_Right; 
 	mPlayerLives = 3;
 	gamescore = 0;
 	mCycle = 0;
-	mHayBales = 0;
 	mMaxHayBales = 3;
-	mChomp = nullptr;
-	mBackground = nullptr;
+
 	playerWidth = 130;
 	playerHeight = 130;
 	enemyWidth = 150;
 	enemyHeight = 140;
+	injury = false;
+
 }
 
 bool Game::Initialize()
@@ -40,6 +46,7 @@ bool Game::Initialize()
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
 		return false;
 	}
+
 	// Initialize IMG
 	if (IMG_Init(IMG_INIT_PNG) == 0)
 	{
@@ -47,15 +54,20 @@ bool Game::Initialize()
 		return false;
 	}
 
+	// Initialize TTF 
+	if (TTF_Init() < 0)
+	{	
+		SDL_Log("Unable to initialize TTF: %s", SDL_GetError());
+	}
+	// Load font
+	mFont = TTF_OpenFont("Assets/Dubai-Regular.ttf", 28);
+	if (!mFont)
+	{
+		return false;
+	}
+
 	// Create an SDL Window
-	mWindow = SDL_CreateWindow(
-		"CMPT 1267", // Window title
-		100,	// Top left x-coordinate of window
-		100,	// Top left y-coordinate of window
-		1024,	// Width of window
-		768,	// Height of window
-		0		// Flags (0 for no flags set)
-	);
+	mWindow = SDL_CreateWindow( "CMPT 1267", 100, 100, 1024, 768, 0	);
 
 	if (!mWindow)
 	{
@@ -64,11 +76,7 @@ bool Game::Initialize()
 	}
 
 	//// Create SDL renderer
-	mRenderer = SDL_CreateRenderer(
-		mWindow, // Window to create renderer for
-		-1,		 // Usually -1
-		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
-	);
+	mRenderer = SDL_CreateRenderer(mWindow, -1,	SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 
 	if (!mRenderer)
 	{
@@ -76,15 +84,27 @@ bool Game::Initialize()
 		return false;
 	}
 
-	// Set up the music and sound effects
+	// Load the music and sound effects
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 	mBackground = Mix_LoadMUS("Assets/jauntytune.wav");
 	mChomp = Mix_LoadWAV("Assets/Cow2.wav");
 	Mix_PlayMusic(mBackground, -1);
 
+	// Load the words for Fonttexture2 (doesnt change throughout the game)
+	std::string textureText = "You got eaten";
+
+	//Put it in the texture
+	SDL_Colour textColour{ 255, 10, 15 };
+	SDL_Surface* textSurface = nullptr;
+	textSurface = TTF_RenderText_Solid(mFont, textureText.c_str(), textColour);
+	mFontTexture1 = SDL_CreateTextureFromSurface(mRenderer, textSurface);
+	SDL_FreeSurface(textSurface);
+	
 
 	// Display the welcome screen & wait for further action
 	Welcome();
+
+	UpdateScoreText();
 
 	// if there is any texture loaded, destroy it. Otherwise set it to the sprite sheet
 	if (mTexture != NULL)
@@ -99,7 +119,7 @@ bool Game::Initialize()
 		return false;
 	}
 
-	//Set players info
+	//Set players starting position
 	mPlayerPos.x = 1024.0f / 2.0f; 
 	mPlayerPos.y = 768.0f / 2.0f;
 	mPlayerDir.x = 0.0f;
@@ -109,7 +129,6 @@ bool Game::Initialize()
 	Enemy newenemy;
 	newenemy.Initialize();
 	myEnemies.push_back(newenemy);
-	printf("size of myenemies: %d\n", myEnemies.size());
 
 	return true;
 }
@@ -242,50 +261,43 @@ void Game::ProcessInput()
 
 void Game::UpdateGame()
 {
-	// Update player position based on direction
-	mPlayerPos.x += mPlayerDir.x;
-	mPlayerPos.y += mPlayerDir.y;
-
-	
-	// Did the player go off the screen in the x direction?
-	if (mPlayerPos.x >= 1024 - playerWidth * 1.5) 
-	{	
-		mPlayerPos.x = 1024 - playerWidth * 1.5;
-	}
-	else if (mPlayerPos.x <= 0 - playerWidth * 0.5)
-	{
-		mPlayerPos.x = -playerWidth * 0.5;
-	}
-	// in y direction?
-	if (mPlayerPos.y >= 768 - playerHeight * 1.5)
-	{
-		mPlayerPos.y = 768 - playerHeight * 1.5;
-	}
-	else if (mPlayerPos.y <= 0 - playerHeight * 0.5)
-	{
-		mPlayerPos.y = - playerHeight * 0.5;
-	}
+	UpdateCowPosition();
 
 	for (int e=0; e<myEnemies.size(); e++)
 	{
 		myEnemies[e].UpdatePosition(mPlayerPos);
 		if (myEnemies[e].CanAttack(mPlayerPos))
 		{
-			//Some sound
+			//Some attack sound effect
+			
 			//some injury occurs
+			injury = true;
 			mPlayerLives--;
-			//reset bear
+			//reset the bear
 			myEnemies[e].ResetPosition(mPlayerPos);
 			if (mPlayerLives < 0)
 			{
 				mIsRunning = false;
 			}
-	
-			//or perhaps game over
 		}
 	}
 
 	UpdateEnvironment();
+
+}
+
+void Game::UpdateScoreText()
+{
+	//Update the text
+	std::string scorestring = std::to_string(gamescore);
+	std::string textureText = "Your Score: " + scorestring;
+
+	//Put it in the texture
+	SDL_Colour textColour {28, 62, 11};
+	SDL_Surface* textSurface = nullptr;
+	textSurface = TTF_RenderText_Solid(mFont, textureText.c_str(), textColour);
+	mFontTexture1 = SDL_CreateTextureFromSurface(mRenderer, textSurface);
+	SDL_FreeSurface(textSurface);
 }
 
 void Game::UpdateEnvironment()
@@ -301,8 +313,35 @@ void Game::UpdateEnvironment()
 			//play the sound effect, update the score, and remove the haybale in question
 			Mix_PlayChannel(-1, mChomp, 0);
 			gamescore += 5;
+			UpdateScoreText();
 			myHaybales.erase(myHaybales.begin() + h);
 		}
+	}
+}
+
+void Game::UpdateCowPosition()
+{
+	// Update player position based on direction
+	mPlayerPos.x += mPlayerDir.x;
+	mPlayerPos.y += mPlayerDir.y;
+
+	// Did the player go off the screen in the x direction?
+	if (mPlayerPos.x >= 1024 - playerWidth * 1.5)
+	{
+		mPlayerPos.x = 1024 - playerWidth * 1.5;
+	}
+	else if (mPlayerPos.x <= 0 - playerWidth * 0.5)
+	{
+		mPlayerPos.x = -playerWidth * 0.5;
+	}
+	// in y direction?
+	if (mPlayerPos.y >= 768 - playerHeight * 1.5)
+	{
+		mPlayerPos.y = 768 - playerHeight * 1.5;
+	}
+	else if (mPlayerPos.y <= 0 - playerHeight * 0.5)
+	{
+		mPlayerPos.y = -playerHeight * 0.5;
 	}
 }
 
@@ -326,7 +365,7 @@ void Game::CowInjury()
 void Game::GenerateOutput()
 {
 	SDL_RenderClear(mRenderer);
-	
+	SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 0);
 	// First the grassy background
 	SDL_Rect src_Rect{ 985, 0, 610, 460 };
 	SDL_RenderCopy(mRenderer, mTexture, &src_Rect, NULL);
@@ -337,12 +376,13 @@ void Game::GenerateOutput()
 	src_Rect.w = 460;
 	src_Rect.h = 450;
 
-	SDL_Rect Hay_Rect { 0,0,100, 100 };
+	SDL_Rect Hay_Rect { 0, 0, 100, 100 };
 
 	for (Haybale h : myHaybales)
 	{
 		Hay_Rect.x = h.GetXPosition();
 		Hay_Rect.y = h.GetYPosition();
+		//SDL_RenderFillRect(mRenderer, &Hay_Rect);
 		SDL_RenderCopy(mRenderer, mTexture, &src_Rect, &Hay_Rect);
 	}
 
@@ -364,8 +404,11 @@ void Game::GenerateOutput()
 		SDL_RenderCopy(mRenderer, mTexture, &src_Rect, &Healthbar_Rect);
 		Healthbar_Rect.x += 60;
 	}
+	// Next the running score total (top right)
+	SDL_Rect textrect{ 850, 10, 155, 48 };
+	SDL_RenderCopyEx(mRenderer, mFontTexture1, NULL, &textrect, NULL, NULL, SDL_FLIP_NONE);
 
-	//Finally display the enemy/bear image
+	// Finally dsplay the enemy/bear image
 	SDL_Rect Enemy_Rect{ 0, 0, enemyWidth, enemyHeight };
 	src_Rect.x = 1595;
 	src_Rect.y = 0;
@@ -379,10 +422,17 @@ void Game::GenerateOutput()
 		SDL_RenderCopy(mRenderer, mTexture, &src_Rect, &Enemy_Rect);
 	}
 
+	//this is meant to print something over top the player's character when the bear eats them...still a work in progress
+	if (injury)
+	{ 
+		SDL_Rect ouchrect{ mPlayerPos.x + playerWidth/2, mPlayerPos.y - 15};
+		SDL_RenderCopyEx(mRenderer, mFontTexture2, NULL, &ouchrect, NULL, NULL, SDL_FLIP_NONE);
+		//SDL_Delay(1000);
+		injury = false;
+	}
+
 	SDL_RenderPresent(mRenderer);
 }
-
-
 
 SDL_Texture* Game::LoadFromFile(std::string filename)
 {
